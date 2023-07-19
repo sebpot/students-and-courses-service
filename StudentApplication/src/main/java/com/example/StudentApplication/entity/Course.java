@@ -1,5 +1,6 @@
-package com.example.CourseApplication.entity;
+package com.example.StudentApplication.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,10 +19,7 @@ public class Course {
 
     private String title;
 
-    private String description;
-
-    private double price;
-
     @ManyToMany
+    @JsonIgnore
     private List<Student> students;
 }

@@ -1,7 +1,9 @@
 package com.example.CourseApplication.controller;
 
 import com.example.CourseApplication.entity.Course;
+import com.example.CourseApplication.entity.Student;
 import com.example.CourseApplication.service.CourseService;
+import com.example.CourseApplication.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +16,9 @@ public class CourseController {
 
     @Autowired
     private CourseService courseService;
+
+    @Autowired
+    private StudentService studentService;
 
     @GetMapping("/{id}")
     public ResponseEntity<Course> getCourse(@PathVariable long id) {
@@ -30,6 +35,12 @@ public class CourseController {
         if(courseOpt.isPresent()) {
             return ResponseEntity.notFound().build();
         }
+        for(Student student : course.getStudents()){
+            Optional<Student> studentOpt = studentService.findById(student.getId());
+            if(studentOpt.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+        }
         courseService.create(course);
         return ResponseEntity.ok().build();
     }
@@ -39,6 +50,12 @@ public class CourseController {
         Optional<Course> courseOpt = courseService.findById(id);
         if(courseOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
+        }
+        for(Student student : course.getStudents()){
+            Optional<Student> studentOpt = studentService.findById(student.getId());
+            if(studentOpt.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
         }
         course.setId(id);
         courseService.create(course);

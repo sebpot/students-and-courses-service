@@ -1,6 +1,8 @@
 package com.example.StudentApplication.controller;
 
+import com.example.StudentApplication.entity.Course;
 import com.example.StudentApplication.entity.Student;
+import com.example.StudentApplication.service.CourseService;
 import com.example.StudentApplication.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,9 @@ public class StudentController {
 
     @Autowired
     private StudentService studentService;
+
+    @Autowired
+    private CourseService courseService;
 
     @GetMapping()
     public ResponseEntity<List<Student>> getStudents() {
@@ -36,6 +41,12 @@ public class StudentController {
         if(studentOpt.isPresent()) {
             return ResponseEntity.notFound().build();
         }
+        for(Course course : student.getCourses()){
+            Optional<Course> courseOpt = courseService.findById(course.getId());
+            if(courseOpt.isEmpty()){
+                return ResponseEntity.notFound().build();
+            }
+        }
         studentService.create(student);
         return ResponseEntity.ok().build();
     }
@@ -45,6 +56,12 @@ public class StudentController {
         Optional<Student> studentOpt = studentService.findById(id);
         if(studentOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
+        }
+        for(Course course : student.getCourses()){
+            Optional<Course> courseOpt = courseService.findById(course.getId());
+            if(courseOpt.isEmpty()){
+                return ResponseEntity.notFound().build();
+            }
         }
         student.setId(id);
         studentService.create(student);

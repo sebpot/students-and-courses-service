@@ -3,6 +3,8 @@ package com.example.StudentApplication.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Setter
 @Getter
 @ToString
@@ -12,7 +14,6 @@ import lombok.*;
 @Table(name="students")
 public class Student {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
     private String name;
@@ -20,4 +21,7 @@ public class Student {
     private String lastName;
 
     private int age;
+
+    @ManyToMany
+    private List<Course> courses;
 }
